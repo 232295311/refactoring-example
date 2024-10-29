@@ -2,6 +2,8 @@ export default function statement(invoice, plays) {
   let statementData = {};
   statementData.customer = invoice.customer;
   statementData.performances = invoice.performances.map(enrichPerformance);
+  statementData.totalAmount = totalAmount(statementData);
+  statementData.totalVolumeCredits = totalVolumeCredits(statementData);
 
   function enrichPerformance(aPerformance) {
     const result = Object.assign({}, aPerformance);
@@ -9,6 +11,22 @@ export default function statement(invoice, plays) {
     result.amount = amountFor(result);
     result.volumeCredits = volumeCreditsFor(result);
 
+    return result;
+  }
+
+  function totalAmount(data) {
+    let result = 0;
+    for (let perf of data.performances) {
+      result += perf.amount;
+    }
+    return result;
+  }
+
+  function totalVolumeCredits(data) {
+    let result = 0;
+    for (let perf of data.performances) {
+      result += perf.volumeCredits;
+    }
     return result;
   }
 
@@ -59,32 +77,16 @@ export default function statement(invoice, plays) {
 // 第五步，打算转移plays，需要先转移playFor，新增map函数
 // 第六步，转移plays成功，消除plays参数
 // 第七步，转移 amountFor 和 volumeCreditsFor
+// 第八步，转移 totalAmount 和 totalVolumeCredits
 function renderPlainText(data) {
   let result = `Statement for ${data.customer}\n`;
   for (let perf of data.performances) {
     // print line for this order
     result += `${perf.play.name}: ${usd(perf.amount)} (${perf.audience} seats)\n`;
   }
-  result += `Amount owed is ${usd(totalAmount())}\n`;
-  result += `You earned ${totalVolumeCredits()} credits\n`;
+  result += `Amount owed is ${usd(data.totalAmount)}\n`;
+  result += `You earned ${data.totalVolumeCredits} credits\n`;
   return result;
-
-  // ================ 计算相关的逻辑都在下面的函数中 ================
-  function totalAmount() {
-    let result = 0;
-    for (let perf of data.performances) {
-      result += perf.amount;
-    }
-    return result;
-  }
-
-  function totalVolumeCredits() {
-    let result = 0;
-    for (let perf of data.performances) {
-      result += perf.volumeCredits;
-    }
-    return result;
-  }
 
   function usd(aNumber) {
     return new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', minimumFractionDigits: 2 }).format(aNumber / 100);
