@@ -9,14 +9,20 @@ export default function statement(invoice, plays) {
   }
   // 拆分循环（227），如果一个循环身兼多职，重构时可以将循环拆开，每个循环之做一件事。方便接下来继续重构。
   // 可能会影响性能，但是先别管他，有了一份结构良好的代码，回头调优其性能也容易得多。
-  let volumeCredits = 0;
-  for (let perf of invoice.performances) {
-    volumeCredits += volumeCreditsFor(perf);
-  }
+  let volumeCredits = totalVolumeCredits();
 
   result += `Amount owed is ${usd(totalAmount / 100)}\n`;
   result += `You earned ${volumeCredits} credits\n`;
   return result;
+
+  // 提炼函数
+  function totalVolumeCredits() {
+    let result = 0;
+    for (let perf of invoice.performances) {
+      result += volumeCreditsFor(perf);
+    }
+    return result;
+  }
 
   // 移除format变量，典型的“将函数赋值给临时变量”的场景，将其替换为一个明确声明的函数；
   // format并未清晰表意，而formatAsUSD又太长。因为它强调格式化货币数字，所以改变函数声明（124）为usd；
