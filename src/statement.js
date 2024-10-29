@@ -4,15 +4,15 @@ export default function statement(invoice, plays) {
   let result = `Statement for ${invoice.customer}\n`;
   const format = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', minimumFractionDigits: 2 }).format;
   for (let perf of invoice.performances) {
-    const play = plays[perf.playID];
-    let thisAmount = amountFor(perf, play);
+    // 内联变量（123），函数内部，临时变量不一定比表达式更具表现力，采用内联手法消除变量
+    let thisAmount = amountFor(perf, playFor(perf));
 
     // add volume credits
     volumeCredits += Math.max(perf.audience - 30, 0);
     // add extra credit for every ten comedy attendees
-    if ('comedy' === play.type) volumeCredits += Math.floor(perf.audience / 5);
+    if ('comedy' === playFor(perf).type) volumeCredits += Math.floor(perf.audience / 5);
     // print line for this order
-    result += `${play.name}: ${format(thisAmount / 100)} (${perf.audience} seats)\n`;
+    result += `${playFor(perf).name}: ${format(thisAmount / 100)} (${perf.audience} seats)\n`;
     totalAmount += thisAmount;
   }
   result += `Amount owed is ${format(totalAmount / 100)}\n`;
@@ -40,6 +40,12 @@ export default function statement(invoice, plays) {
         throw new Error(`unknown type: ${play.type}`);
     }
     return result;
+  }
+
+  // 以查询取代临时变量（178），不必要的变量会创建很多对应的具有局部作用域的临时变量，会使提炼函数变得更加复杂
+  // 这样可以避免在多个函数中重复编写计算逻辑，每当在不同地方看到同一段临时变量计算逻辑，可以想法设法挪到同一个函数里
+  function playFor(aPerformance) {
+    return plays[aPerformance.playID];
   }
 }
 
