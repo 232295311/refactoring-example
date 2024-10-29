@@ -1,7 +1,12 @@
 export default function statement(invoice, plays) {
   let statementData = {};
   statementData.customer = invoice.customer;
-  statementData.performances = invoice.performances;
+  statementData.performances = invoice.performances.map(enrichPerformance);
+
+  function enrichPerformance(aPerformance) {
+    const result = Object.assign({}, aPerformance);
+    return result;
+  }
 
   return renderPlainText(statementData, plays);
 }
@@ -12,6 +17,7 @@ export default function statement(invoice, plays) {
 // 第二步，增加中转数据结构data，接下来的目的是逐渐将invoice 和 plays 转移到 data 中
 // 第三步，转移invoice.customer
 // 第四步，转移invoice.performances，消除invoice参数
+// 第五步，打算转移plays，需要先转移playFor，新增map函数
 function renderPlainText(data, plays) {
   let result = `Statement for ${data.customer}\n`;
   for (let perf of data.performances) {
