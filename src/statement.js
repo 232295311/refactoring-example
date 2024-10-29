@@ -3,10 +3,10 @@ export default function statement(invoice, plays) {
 
   for (let perf of invoice.performances) {
     // print line for this order
-    result += `${playFor(perf).name}: ${usd(amountFor(perf) / 100)} (${perf.audience} seats)\n`;
+    result += `${playFor(perf).name}: ${usd(amountFor(perf))} (${perf.audience} seats)\n`;
   }
 
-  result += `Amount owed is ${usd(totalAmount() / 100)}\n`;
+  result += `Amount owed is ${usd(totalAmount())}\n`;
   result += `You earned ${totalVolumeCredits()} credits\n`;
   return result;
 
@@ -29,7 +29,7 @@ export default function statement(invoice, plays) {
   // 移除format变量，典型的“将函数赋值给临时变量”的场景，将其替换为一个明确声明的函数；
   // format并未清晰表意，而formatAsUSD又太长。因为它强调格式化货币数字，所以改变函数声明（124）为usd；
   function usd(aNumber) {
-    return new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', minimumFractionDigits: 2 }).format(aNumber);
+    return new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', minimumFractionDigits: 2 }).format(aNumber / 100);
   }
 
   // 提炼函数（106），如果你需要花时间浏览一段代码才能弄清它到底在干什么，那么就应该提炼它。
