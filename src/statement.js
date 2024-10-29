@@ -1,6 +1,11 @@
 export default function statement(invoice, plays) {
-  // 第一阶段已经完成，顶层statement只剩7行，且都是与处理打印相关的逻辑。
-  // 与计算相关的逻辑该用一组嵌套函数来支持。
+  return renderPlainText(invoice, plays);
+}
+
+// 拆分阶段（154），将大段代码拆分成各自独立的模块，每个模块单独维护一个主题。
+// 现在我想拆成两个模块，第一模块负责计算，第二模块负责打印。
+// 第一步，先提炼全部函数到第二模块的函数中
+function renderPlainText(invoice, plays) {
   let result = `Statement for ${invoice.customer}\n`;
 
   for (let perf of invoice.performances) {
@@ -28,15 +33,10 @@ export default function statement(invoice, plays) {
     return result;
   }
 
-  // 移除format变量，典型的“将函数赋值给临时变量”的场景，将其替换为一个明确声明的函数；
-  // format并未清晰表意，而formatAsUSD又太长。因为它强调格式化货币数字，所以改变函数声明（124）为usd；
   function usd(aNumber) {
     return new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', minimumFractionDigits: 2 }).format(aNumber / 100);
   }
 
-  // 提炼函数（106），如果你需要花时间浏览一段代码才能弄清它到底在干什么，那么就应该提炼它。
-  // 根据它做的事为它命名， 以后再读到这段代码的时候，一眼就能看出函数的用途，而不需要关心它如何达成该用途。
-  // 改变函数声明（124），函数改名、加减参数、参数改为对象 等等，只要让函数的意图更清晰，就可以使用该方法。
   function amountFor(aPerformance) {
     let result = 0;
     switch (playFor(aPerformance).type) {
@@ -59,8 +59,6 @@ export default function statement(invoice, plays) {
     return result;
   }
 
-  // 以查询取代临时变量（178），不必要的变量会创建很多对应的具有局部作用域的临时变量，会使提炼函数变得更加复杂
-  // 这样可以避免在多个函数中重复编写计算逻辑，每当在不同地方看到同一段临时变量计算逻辑，可以想法设法挪到同一个函数里
   function playFor(aPerformance) {
     return plays[aPerformance.playID];
   }
@@ -74,7 +72,6 @@ export default function statement(invoice, plays) {
     return result;
   }
 }
-
 /**
  * Statement for BigCo
  * Hamlet: $650.00 (55 seats)
