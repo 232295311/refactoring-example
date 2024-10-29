@@ -5,7 +5,7 @@ export default function statement(invoice, plays) {
   const format = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', minimumFractionDigits: 2 }).format;
   for (let perf of invoice.performances) {
     // 内联变量（123），函数内部，临时变量不一定比表达式更具表现力，采用内联手法消除变量
-    let thisAmount = amountFor(perf, playFor(perf));
+    let thisAmount = amountFor(perf);
 
     // add volume credits
     volumeCredits += Math.max(perf.audience - 30, 0);
@@ -20,9 +20,10 @@ export default function statement(invoice, plays) {
   return result;
   // 提炼函数（106），如果你需要花时间浏览一段代码才能弄清它到底在干什么，那么就应该提炼它。
   // 根据它做的事为它命名， 以后再读到这段代码的时候，一眼就能看出函数的用途，而不需要关心它如何达成该用途。
-  function amountFor(aPerformance, play) {
+  // 改变函数声明（124），函数改名、加减参数、参数改为对象 等等，只要让函数的意图更清晰，就可以使用该方法。
+  function amountFor(aPerformance) {
     let result = 0;
-    switch (play.type) {
+    switch (playFor(aPerformance).type) {
       case 'tragedy':
         result = 40000;
         if (aPerformance.audience > 30) {
@@ -37,7 +38,7 @@ export default function statement(invoice, plays) {
         result += 300 * aPerformance.audience;
         break;
       default:
-        throw new Error(`unknown type: ${play.type}`);
+        throw new Error(`unknown type: ${playFor(aPerformance).type}`);
     }
     return result;
   }
