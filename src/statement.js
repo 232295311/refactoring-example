@@ -5,10 +5,15 @@ export default function statement(invoice, plays) {
 
   function enrichPerformance(aPerformance) {
     const result = Object.assign({}, aPerformance);
+    result.play = playFor(result);
     return result;
   }
 
-  return renderPlainText(statementData, plays);
+  function playFor(aPerformance) {
+    return plays[aPerformance.playID];
+  }
+
+  return renderPlainText(statementData);
 }
 
 // 拆分阶段（154），将大段代码拆分成各自独立的模块，每个模块单独维护一个主题。
@@ -18,11 +23,12 @@ export default function statement(invoice, plays) {
 // 第三步，转移invoice.customer
 // 第四步，转移invoice.performances，消除invoice参数
 // 第五步，打算转移plays，需要先转移playFor，新增map函数
-function renderPlainText(data, plays) {
+// 第六步，转移plays成功，消除plays参数
+function renderPlainText(data) {
   let result = `Statement for ${data.customer}\n`;
   for (let perf of data.performances) {
     // print line for this order
-    result += `${playFor(perf).name}: ${usd(amountFor(perf))} (${perf.audience} seats)\n`;
+    result += `${perf.play.name}: ${usd(amountFor(perf))} (${perf.audience} seats)\n`;
   }
   result += `Amount owed is ${usd(totalAmount())}\n`;
   result += `You earned ${totalVolumeCredits()} credits\n`;
@@ -51,7 +57,7 @@ function renderPlainText(data, plays) {
 
   function amountFor(aPerformance) {
     let result = 0;
-    switch (playFor(aPerformance).type) {
+    switch (aPerformance.play.type) {
       case 'tragedy':
         result = 40000;
         if (aPerformance.audience > 30) {
@@ -66,20 +72,16 @@ function renderPlainText(data, plays) {
         result += 300 * aPerformance.audience;
         break;
       default:
-        throw new Error(`unknown type: ${playFor(aPerformance).type}`);
+        throw new Error(`unknown type: ${aPerformance.play.type}`);
     }
     return result;
   }
 
-  function playFor(aPerformance) {
-    return plays[aPerformance.playID];
-  }
-
-  function volumeCreditsFor(perf) {
+  function volumeCreditsFor(aPerformance) {
     let result = 0; // 原函数中的 volumeCredits
-    result += Math.max(perf.audience - 30, 0);
-    if ('comedy' === playFor(perf).type) {
-      result += Math.floor(perf.audience / 5);
+    result += Math.max(aPerformance.audience - 30, 0);
+    if ('comedy' === aPerformance.play.type) {
+      result += Math.floor(aPerformance.audience / 5);
     }
     return result;
   }
