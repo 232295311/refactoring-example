@@ -1,4 +1,6 @@
 export default function statement(invoice, plays) {
+  // 第一阶段已经完成，顶层statement只剩7行，且都是与处理打印相关的逻辑。
+  // 与计算相关的逻辑该用一组嵌套函数来支持。
   let result = `Statement for ${invoice.customer}\n`;
 
   for (let perf of invoice.performances) {
@@ -9,7 +11,7 @@ export default function statement(invoice, plays) {
   result += `Amount owed is ${usd(totalAmount())}\n`;
   result += `You earned ${totalVolumeCredits()} credits\n`;
   return result;
-
+  // ================ 计算相关的逻辑都在下面的函数中 ================
   function totalAmount() {
     let result = 0;
     for (let perf of invoice.performances) {
