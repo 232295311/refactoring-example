@@ -4,10 +4,8 @@ export default function statement(invoice, plays) {
   let result = `Statement for ${invoice.customer}\n`;
   const format = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', minimumFractionDigits: 2 }).format;
   for (let perf of invoice.performances) {
-    // add volume credits
-    volumeCredits += Math.max(perf.audience - 30, 0);
-    // add extra credit for every ten comedy attendees
-    if ('comedy' === playFor(perf).type) volumeCredits += Math.floor(perf.audience / 5);
+    volumeCredits += volumeCreditsFor(perf);
+
     // print line for this order
     result += `${playFor(perf).name}: ${format(amountFor(perf) / 100)} (${perf.audience} seats)\n`;
     totalAmount += amountFor(perf);
@@ -15,6 +13,7 @@ export default function statement(invoice, plays) {
   result += `Amount owed is ${format(totalAmount / 100)}\n`;
   result += `You earned ${volumeCredits} credits\n`;
   return result;
+
   // 提炼函数（106），如果你需要花时间浏览一段代码才能弄清它到底在干什么，那么就应该提炼它。
   // 根据它做的事为它命名， 以后再读到这段代码的时候，一眼就能看出函数的用途，而不需要关心它如何达成该用途。
   // 改变函数声明（124），函数改名、加减参数、参数改为对象 等等，只要让函数的意图更清晰，就可以使用该方法。
@@ -44,6 +43,15 @@ export default function statement(invoice, plays) {
   // 这样可以避免在多个函数中重复编写计算逻辑，每当在不同地方看到同一段临时变量计算逻辑，可以想法设法挪到同一个函数里
   function playFor(aPerformance) {
     return plays[aPerformance.playID];
+  }
+
+  function volumeCreditsFor(perf) {
+    let result = 0; // 原函数中的 volumeCredits
+    result += Math.max(perf.audience - 30, 0);
+    if ('comedy' === playFor(perf).type) {
+      result += Math.floor(perf.audience / 5);
+    }
+    return result;
   }
 }
 
