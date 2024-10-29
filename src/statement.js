@@ -1,7 +1,9 @@
 export default function statement(invoice, plays) {
   let statementData = {};
   statementData.customer = invoice.customer;
-  return renderPlainText(statementData, invoice, plays);
+  statementData.performances = invoice.performances;
+
+  return renderPlainText(statementData, plays);
 }
 
 // 拆分阶段（154），将大段代码拆分成各自独立的模块，每个模块单独维护一个主题。
@@ -9,9 +11,10 @@ export default function statement(invoice, plays) {
 // 第一步，先提炼全部函数到第二模块的函数中
 // 第二步，增加中转数据结构data，接下来的目的是逐渐将invoice 和 plays 转移到 data 中
 // 第三步，转移invoice.customer
-function renderPlainText(data, invoice, plays) {
+// 第四步，转移invoice.performances，消除invoice参数
+function renderPlainText(data, plays) {
   let result = `Statement for ${data.customer}\n`;
-  for (let perf of invoice.performances) {
+  for (let perf of data.performances) {
     // print line for this order
     result += `${playFor(perf).name}: ${usd(amountFor(perf))} (${perf.audience} seats)\n`;
   }
@@ -22,7 +25,7 @@ function renderPlainText(data, invoice, plays) {
   // ================ 计算相关的逻辑都在下面的函数中 ================
   function totalAmount() {
     let result = 0;
-    for (let perf of invoice.performances) {
+    for (let perf of data.performances) {
       result += amountFor(perf);
     }
     return result;
@@ -30,7 +33,7 @@ function renderPlainText(data, invoice, plays) {
 
   function totalVolumeCredits() {
     let result = 0;
-    for (let perf of invoice.performances) {
+    for (let perf of data.performances) {
       result += volumeCreditsFor(perf);
     }
     return result;
