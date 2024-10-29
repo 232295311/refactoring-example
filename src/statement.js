@@ -2,7 +2,7 @@ export default function statement(invoice, plays) {
   let totalAmount = 0;
   let volumeCredits = 0;
   let result = `Statement for ${invoice.customer}\n`;
-  const format = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', minimumFractionDigits: 2 }).format;
+
   for (let perf of invoice.performances) {
     volumeCredits += volumeCreditsFor(perf);
 
@@ -13,6 +13,11 @@ export default function statement(invoice, plays) {
   result += `Amount owed is ${format(totalAmount / 100)}\n`;
   result += `You earned ${volumeCredits} credits\n`;
   return result;
+
+  // 移除format变量，典型的“将函数赋值给临时变量”的场景，将其替换为一个明确声明的函数
+  function format(aNumber) {
+    return new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', minimumFractionDigits: 2 }).format(aNumber);
+  }
 
   // 提炼函数（106），如果你需要花时间浏览一段代码才能弄清它到底在干什么，那么就应该提炼它。
   // 根据它做的事为它命名， 以后再读到这段代码的时候，一眼就能看出函数的用途，而不需要关心它如何达成该用途。
