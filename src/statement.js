@@ -1,4 +1,4 @@
-function statement(invoice, plays) {
+export default function statement(invoice, plays) {
   let totalAmount = 0;
   let volumeCredits = 0;
   let result = `Statement for ${invoice.customer}\n`;
@@ -30,27 +30,13 @@ function statement(invoice, plays) {
     // add extra credit for every ten comedy attendees
     if ('comedy' === play.type) volumeCredits += Math.floor(perf.audience / 5);
     // print line for this order
-    result += `${play.name}: ${format(thisAmount / 100)} (${perf.audience} seats) \n`;
+    result += `${play.name}: ${format(thisAmount / 100)} (${perf.audience} seats)\n`;
     totalAmount += thisAmount;
   }
   result += `Amount owed is ${format(totalAmount / 100)}\n`;
   result += `You earned ${volumeCredits} credits\n`;
   return result;
 }
-
-const fs = require('fs');
-
-// 从文件中读取 JSON 数据
-const playsContent = fs.readFileSync('./plays.json', 'utf8');
-const invoicesContent = fs.readFileSync('./invoices.json', 'utf8');
-
-// 将 JSON 字符串转换为 JavaScript 对象
-const plays = JSON.parse(playsContent);
-const invoices = JSON.parse(invoicesContent);
-
-// 调用函数并打印结果
-const result = statement(invoices, plays);
-console.log(result);
 
 /**
  * Statement for BigCo
