@@ -7,15 +7,11 @@ export default function statement(invoice, plays) {
     result += `${playFor(perf).name}: ${usd(amountFor(perf) / 100)} (${perf.audience} seats)\n`;
     totalAmount += amountFor(perf);
   }
-  // 拆分循环（227），如果一个循环身兼多职，重构时可以将循环拆开，每个循环之做一件事。方便接下来继续重构。
-  // 可能会影响性能，但是先别管他，有了一份结构良好的代码，回头调优其性能也容易得多。
-  let volumeCredits = totalVolumeCredits();
 
   result += `Amount owed is ${usd(totalAmount / 100)}\n`;
-  result += `You earned ${volumeCredits} credits\n`;
+  result += `You earned ${totalVolumeCredits()} credits\n`;
   return result;
 
-  // 提炼函数
   function totalVolumeCredits() {
     let result = 0;
     for (let perf of invoice.performances) {
