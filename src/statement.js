@@ -1,15 +1,19 @@
 export default function statement(invoice, plays) {
   let totalAmount = 0;
-  let volumeCredits = 0;
   let result = `Statement for ${invoice.customer}\n`;
 
   for (let perf of invoice.performances) {
-    volumeCredits += volumeCreditsFor(perf);
-
     // print line for this order
     result += `${playFor(perf).name}: ${usd(amountFor(perf) / 100)} (${perf.audience} seats)\n`;
     totalAmount += amountFor(perf);
   }
+  // 拆分循环（227），如果一个循环身兼多职，重构时可以将循环拆开，每个循环之做一件事。方便接下来继续重构。
+  // 可能会影响性能，但是先别管他，有了一份结构良好的代码，回头调优其性能也容易得多。
+  let volumeCredits = 0;
+  for (let perf of invoice.performances) {
+    volumeCredits += volumeCreditsFor(perf);
+  }
+
   result += `Amount owed is ${usd(totalAmount / 100)}\n`;
   result += `You earned ${volumeCredits} credits\n`;
   return result;
