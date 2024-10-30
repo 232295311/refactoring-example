@@ -9,6 +9,29 @@ class PerformanceCalculator {
     this.performance = aPerformance;
     this.play = aPlay;
   }
+  // 迁移函数，复制一份函数到新上下文，它在上下文中引用的所有变量/函数，是否也跟着迁移过来了。
+  // 在原上下文正确引用新上下文的迁移函数。
+  amountFor() {
+    let result = 0;
+    switch (this.play.type) {
+      case 'tragedy':
+        result = 40000;
+        if (this.performance.audience > 30) {
+          result += 1000 * (this.performance.audience - 30);
+        }
+        break;
+      case 'comedy':
+        result = 30000;
+        if (this.performance.audience > 20) {
+          result += 10000 + 500 * (this.performance.audience - 20);
+        }
+        result += 300 * this.performance.audience;
+        break;
+      default:
+        throw new Error(`unknown type: ${this.play.type}`);
+    }
+    return result;
+  }
 }
 
 // 第一模块，只负责计算
@@ -50,25 +73,7 @@ export default function createStatementData(invoice, plays) {
   }
 
   function amountFor(aPerformance) {
-    let result = 0;
-    switch (aPerformance.play.type) {
-      case 'tragedy':
-        result = 40000;
-        if (aPerformance.audience > 30) {
-          result += 1000 * (aPerformance.audience - 30);
-        }
-        break;
-      case 'comedy':
-        result = 30000;
-        if (aPerformance.audience > 20) {
-          result += 10000 + 500 * (aPerformance.audience - 20);
-        }
-        result += 300 * aPerformance.audience;
-        break;
-      default:
-        throw new Error(`unknown type: ${aPerformance.play.type}`);
-    }
-    return result;
+    return new PerformanceCalculator(aPerformance, playFor(aPerformance)).amountFor();
   }
 
   function playFor(aPerformance) {
