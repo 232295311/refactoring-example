@@ -5,8 +5,9 @@
  */
 // 演出计算器
 class PerformanceCalculator {
-  constructor(aPerformance) {
+  constructor(aPerformance, aPlay) {
     this.performance = aPerformance;
+    this.play = aPlay;
   }
 }
 
@@ -20,10 +21,10 @@ export default function createStatementData(invoice, plays) {
   return statementData;
 
   function enrichPerformance(aPerformance) {
-    const calculator = new PerformanceCalculator(aPerformance);
+    const calculator = new PerformanceCalculator(aPerformance, playFor(aPerformance));
 
     const result = Object.assign({}, aPerformance);
-    result.play = playFor(result);
+    result.play = calculator.play;
     result.amount = amountFor(result);
     result.volumeCredits = volumeCreditsFor(result);
 
