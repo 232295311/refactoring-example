@@ -11,7 +11,7 @@ class PerformanceCalculator {
   }
   // 迁移函数，复制一份函数到新上下文，它在上下文中引用的所有变量/函数，是否也跟着迁移过来了。
   // 在原上下文正确引用新上下文的迁移函数。
-  amountFor() {
+  get amount() {
     let result = 0;
     switch (this.play.type) {
       case 'tragedy':
@@ -73,7 +73,7 @@ export default function createStatementData(invoice, plays) {
   }
 
   function amountFor(aPerformance) {
-    return new PerformanceCalculator(aPerformance, playFor(aPerformance)).amountFor();
+    return new PerformanceCalculator(aPerformance, playFor(aPerformance)).amount;
   }
 
   function playFor(aPerformance) {
