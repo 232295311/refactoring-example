@@ -15,11 +15,7 @@ class PerformanceCalculator {
     let result = 0;
     switch (this.play.type) {
       case 'tragedy':
-        result = 40000;
-        if (this.performance.audience > 30) {
-          result += 1000 * (this.performance.audience - 30);
-        }
-        break;
+        throw new Error('bad thing');
       case 'comedy':
         result = 30000;
         if (this.performance.audience > 20) {
@@ -43,7 +39,16 @@ class PerformanceCalculator {
   }
 }
 
-class TragedyCalculator extends PerformanceCalculator {}
+class TragedyCalculator extends PerformanceCalculator {
+  // 迁移条件表达式，原使用处抛出错误。
+  get amount() {
+    let result = 40000;
+    if (this.performance.audience > 30) {
+      result += 1000 * (this.performance.audience - 30);
+    }
+    return result;
+  }
+}
 
 class ComedyCalculator extends PerformanceCalculator {}
 
