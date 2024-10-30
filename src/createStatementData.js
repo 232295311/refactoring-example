@@ -1,3 +1,11 @@
+/**
+ * 多态改造完成。多态的好处：以一个个的高阶用例(子类),去拆解复杂的条件逻辑（比如在switch里写一堆）。
+ * 分为两种方式：
+ * 1. 如例子中的amount：switch中每个条件，处理各自的条件逻辑，就可以针对每种分支逻辑单独创建一个类
+ * 2. 如例子中的volumeCredits,有一个基础逻辑，在此之上根据条件有不同变体逻辑。
+ *    就可以将基础逻辑放入超类，将每种变体逻辑放入不同子类，其中代码着重强调与基础逻辑的差异。
+ */
+
 // 演出计算器
 class PerformanceCalculator {
   constructor(aPerformance, aPlay) {
@@ -13,7 +21,7 @@ class PerformanceCalculator {
     return Math.max(this.performance.audience - 30, 0);
   }
 }
-
+// 子类-悲剧
 class TragedyCalculator extends PerformanceCalculator {
   get amount() {
     let result = 40000;
@@ -23,7 +31,7 @@ class TragedyCalculator extends PerformanceCalculator {
     return result;
   }
 }
-
+// 子类-喜剧
 class ComedyCalculator extends PerformanceCalculator {
   get amount() {
     let result = 30000;
