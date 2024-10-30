@@ -1,9 +1,3 @@
-/**
- * 我们观察到 enrichPerformance 是计算演出数据的关键，正是由他填充了数据结构。
- * 现在为了多态，我们需要创建一个类，通过这个类来调用 enrichPerformance 中调用的函数
- * 以方便扩展多态。
- */
-
 // 演出计算器
 class PerformanceCalculator {
   constructor(aPerformance, aPlay) {
@@ -16,12 +10,7 @@ class PerformanceCalculator {
   }
 
   get volumeCredits() {
-    let result = 0;
-    result += Math.max(this.performance.audience - 30, 0);
-    if ('comedy' === this.play.type) {
-      result += Math.floor(this.performance.audience / 5);
-    }
-    return result;
+    return Math.max(this.performance.audience - 30, 0);
   }
 }
 
@@ -43,6 +32,9 @@ class ComedyCalculator extends PerformanceCalculator {
     }
     result += 300 * this.performance.audience;
     return result;
+  }
+  get volumeCredits() {
+    return super.volumeCredits + Math.floor(this.performance.audience / 5);
   }
 }
 
