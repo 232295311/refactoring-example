@@ -12,16 +12,7 @@ class PerformanceCalculator {
   }
 
   get amount() {
-    let result = 0;
-    switch (this.play.type) {
-      case 'tragedy':
-        throw new Error('bad thing');
-      case 'comedy':
-        throw new Error('bad bad thing');
-      default:
-        throw new Error(`unknown type: ${this.play.type}`);
-    }
-    return result;
+    throw new Error('This is abstract function, which subclass must implement it.');
   }
 
   get volumeCredits() {
@@ -35,7 +26,6 @@ class PerformanceCalculator {
 }
 
 class TragedyCalculator extends PerformanceCalculator {
-  // 迁移条件表达式
   get amount() {
     let result = 40000;
     if (this.performance.audience > 30) {
@@ -46,7 +36,6 @@ class TragedyCalculator extends PerformanceCalculator {
 }
 
 class ComedyCalculator extends PerformanceCalculator {
-  // 迁移条件表达式
   get amount() {
     let result = 30000;
     if (this.performance.audience > 20) {
