@@ -1,3 +1,15 @@
+/**
+ * 我们观察到 enrichPerformance 是计算演出数据的关键，正是由他填充了数据结构。
+ * 现在为了多态，我们需要创建一个类，通过这个类来调用 enrichPerformance 中调用的函数
+ * 以方便扩展多态。
+ */
+// 演出计算器
+class PerformanceCalculator {
+  constructor(aPerformance) {
+    this.performance = aPerformance;
+  }
+}
+
 // 第一模块，只负责计算
 export default function createStatementData(invoice, plays) {
   const statementData = {};
@@ -8,6 +20,8 @@ export default function createStatementData(invoice, plays) {
   return statementData;
 
   function enrichPerformance(aPerformance) {
+    const calculator = new PerformanceCalculator(aPerformance);
+
     const result = Object.assign({}, aPerformance);
     result.play = playFor(result);
     result.amount = amountFor(result);
