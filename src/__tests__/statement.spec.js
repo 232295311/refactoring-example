@@ -102,7 +102,7 @@ describe('statement function', () => {
     expect(result).toContain('You earned 6 credits');
   });
 
-  test('处理 unknown 类型的喜剧表演', () => {
+  test('处理 unknown 类型的表演', () => {
     const invoice = {
       customer: 'John Doe',
       performances: [{ playID: 'unknown-play', audience: 20 }],
