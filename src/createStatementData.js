@@ -3,14 +3,14 @@
  * 现在为了多态，我们需要创建一个类，通过这个类来调用 enrichPerformance 中调用的函数
  * 以方便扩展多态。
  */
+
 // 演出计算器
 class PerformanceCalculator {
   constructor(aPerformance, aPlay) {
     this.performance = aPerformance;
     this.play = aPlay;
   }
-  // 迁移函数，复制一份函数到新上下文，它在上下文中引用的所有变量/函数，是否也跟着迁移过来了。
-  // 在原上下文正确引用新上下文的迁移函数。
+
   get amount() {
     let result = 0;
     switch (this.play.type) {
@@ -33,7 +33,6 @@ class PerformanceCalculator {
     return result;
   }
 
-  // 同样的迁移函数，内联变量
   get volumeCredits() {
     let result = 0;
     result += Math.max(this.performance.audience - 30, 0);
@@ -42,6 +41,11 @@ class PerformanceCalculator {
     }
     return result;
   }
+}
+
+// 以工厂函数取代构造函数（334）
+function createPerformanceCalculator(aPerformance, aPlay) {
+  return new PerformanceCalculator(aPerformance, aPlay);
 }
 
 // 第一模块，只负责计算
@@ -54,7 +58,7 @@ export default function createStatementData(invoice, plays) {
   return statementData;
 
   function enrichPerformance(aPerformance) {
-    const calculator = new PerformanceCalculator(aPerformance, playFor(aPerformance));
+    const calculator = createPerformanceCalculator(aPerformance, playFor(aPerformance));
 
     const result = Object.assign({}, aPerformance);
     result.play = calculator.play;
@@ -77,17 +81,3 @@ export default function createStatementData(invoice, plays) {
     return plays[aPerformance.playID];
   }
 }
-
-/**
- * 虽然代码函数增加了，但重构也带来了代码可读性的提高。
- * 额外的包装将混杂的逻辑分解成可辨别的两部分，分离了计算逻辑和打印样式。
- * 这种模块化有助于了解他们的协作关系。
- * 通过这些重构，我们可以轻而易举地添加打印样式，而无需顾虑计算逻辑。
- */
-
-/**
- * 下面展望下个阶段的重构：支持更多类型的戏剧
- * 目前只支持戏剧和悲剧，如果需要添加其他类型的戏剧，我们只需要在计算函数里添加分支逻辑即可。
- * 但是这样的设计容易因代码堆积而腐败。
- * 现在我们开始尝试使用“类型多台”来取代“条件表达式”
- */
